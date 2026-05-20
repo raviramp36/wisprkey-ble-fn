@@ -1,0 +1,26 @@
+{
+  "title": "WisprKey F24 to Mac Fn/Globe",
+  "rules": [
+    {
+      "description": "Map WisprKey F24 to Mac Fn/Globe",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "f24",
+            "modifiers": {
+              "optional": [
+                "any"
+              ]
+            }
+          },
+          "to": [
+            {
+              "apple_vendor_top_case_key_code": "keyboard_fn"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
