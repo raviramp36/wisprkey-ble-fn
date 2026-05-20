@@ -16,7 +16,7 @@
 
 static const char *TAG = "wisprkey_ble";
 
-static const gpio_num_t BUTTON_PIN = GPIO_NUM_21;
+static const gpio_num_t BUTTON_PIN = GPIO_NUM_7;
 static const TickType_t DEBOUNCE_TICKS = pdMS_TO_TICKS(25);
 
 #define HID_RPT_ID_KEYBOARD 1

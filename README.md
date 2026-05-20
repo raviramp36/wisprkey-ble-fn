@@ -1,20 +1,20 @@
 # WisprKey BLE Fn Button
 
-WisprKey is ESP32-S3 firmware for a one-button BLE keyboard. The button is wired to GPIO21 and sends a function-key fallback (`F24`) plus an experimental Apple vendor Fn/Globe-style HID report.
+WisprKey is ESP32-C3 firmware for a one-button BLE keyboard. The button is wired to IO7 and sends a function-key fallback (`F24`) plus an experimental Apple vendor Fn/Globe-style HID report.
 
 The reliable macOS path is:
 
-1. ESP32-S3 advertises as `WisprKey BLE`.
-2. GPIO21 button sends `F24`.
+1. ESP32-C3 advertises as `WisprKey BLE`.
+2. IO7 button sends `F24`.
 3. macOS maps `F24` to Fn/Globe with `hidutil` or Karabiner-Elements.
 
 Generic BLE keyboards do not have a standard cross-platform Fn key. Apple’s internal Fn/Globe key is vendor-specific, so the firmware includes an experimental report, but the documented working path is the F24 mapping.
 
 ## Hardware
 
-- Board: ESP32-S3 with native USB Serial/JTAG
-- Button input: `GPIO21`
-- Button wiring: `GPIO21` to `GND`
+- Board: ESP32-C3
+- Button input: `IO7`
+- Button wiring: `IO7` to `GND`
 - Firmware input mode: internal pull-up enabled
 - Pressed state: active-low
 
@@ -40,13 +40,13 @@ Install ESP-IDF 5.4 or newer, then:
 
 ```sh
 source ~/esp/esp-idf/export.sh
-idf.py set-target esp32s3
+idf.py set-target esp32c3
 idf.py build
 ```
 
 ## Flash
 
-Put the ESP32-S3 in bootloader mode if needed:
+Put the ESP32-C3 in bootloader mode if needed:
 
 1. Hold `BOOT`
 2. Tap `RESET`
@@ -80,7 +80,7 @@ wisprkey_ble: Press F24
 wisprkey_ble: Release F24
 ```
 
-If these logs appear, the ESP32-S3 and GPIO21 wiring are working.
+If these logs appear, the ESP32-C3 and IO7 wiring are working.
 
 ## Pair On macOS
 
@@ -132,16 +132,16 @@ Hold the WisprKey button and press `Delete` on the Mac keyboard. If macOS accept
 ## Troubleshooting
 
 - BLE connects but there is no visible response: plain `F24` usually has no visible macOS action unless mapped.
-- GPIO logs do not appear: check that the button shorts GPIO21 to GND and that the firmware was flashed after the latest build.
+- GPIO logs do not appear: check that the button shorts IO7 to GND and that the firmware was flashed after the latest build.
 - BLE connects but mapping does not work: remove and re-pair `WisprKey BLE` after descriptor changes.
 - Karabiner install requires a macOS administrator password because it installs a system extension.
 
 ## Current Status
 
-Verified on an ESP32-S3:
+Verified during development:
 
 - ESP-IDF build succeeds.
-- Flash succeeds over `/dev/cu.usbmodem1101`.
+- ESP32-C3 target build succeeds.
 - BLE pairs as `WisprKey BLE`.
-- GPIO21 press/release is detected in firmware logs.
+- IO7 press/release is detected in firmware logs when wired active-low.
 - macOS `hidutil` accepts the F24-to-Fn mapping.
