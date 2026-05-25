@@ -107,7 +107,7 @@ mkdir -p ~/.config/karabiner/assets/complex_modifications
 cp macos/karabiner-f24-to-fn.json ~/.config/karabiner/assets/complex_modifications/wisprkey-f24-to-fn.json
 ```
 
-Open Karabiner-Elements and enable the rule named `WisprKey: hold or single-click for Fn/Globe, double-click for Enter`.
+Open Karabiner-Elements and enable the rule named `WisprKey: hold for Fn/Globe, double-click for Enter`.
 
 If you previously installed the `hidutil` mapping, remove it because it cannot detect double-click timing:
 
