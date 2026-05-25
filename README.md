@@ -6,7 +6,7 @@ The reliable macOS path is:
 
 1. ESP32-C3 advertises as `WisprKey BLE`.
 2. IO7 button sends `F24`.
-3. macOS maps `F24` to Fn/Globe with `hidutil` or Karabiner-Elements.
+3. macOS software maps `F24` to Fn/Globe or Enter with Karabiner-Elements.
 
 Generic BLE keyboards do not have a standard cross-platform Fn key. Apple’s internal Fn/Globe key is vendor-specific, so the firmware includes an experimental report, but the documented working path is the F24 mapping.
 
@@ -17,6 +17,14 @@ Generic BLE keyboards do not have a standard cross-platform Fn key. Apple’s in
 - Button wiring: `IO7` to `GND`
 - Firmware input mode: internal pull-up enabled
 - Pressed state: active-low
+
+## Button Behavior
+
+- Hold: Karabiner sends and holds Fn/Globe until release.
+- Single short click: Karabiner sends a delayed Fn/Globe tap after the double-click window expires.
+- Double short click: Karabiner sends `Enter`.
+
+This behavior is implemented on macOS, not in firmware. The single-click Fn/Globe tap is delayed by about 300 ms so a double-click does not accidentally trigger talk/audio capture first.
 
 ## Firmware
 
@@ -88,9 +96,28 @@ If these logs appear, the ESP32-C3 and IO7 wiring are working.
 2. Pair `WisprKey BLE`.
 3. If the HID descriptor changed after a firmware update, remove/forget `WisprKey BLE`, then pair it again.
 
-## macOS Fn/Globe Mapping
+## macOS Fn/Globe And Double-Click Mapping
 
-### Option 1: hidutil
+### Recommended: Karabiner-Elements
+
+Karabiner-Elements is required for the double-click Enter behavior. Install Karabiner-Elements, then copy:
+
+```sh
+mkdir -p ~/.config/karabiner/assets/complex_modifications
+cp macos/karabiner-f24-to-fn.json ~/.config/karabiner/assets/complex_modifications/wisprkey-f24-to-fn.json
+```
+
+Open Karabiner-Elements and enable the rule named `WisprKey: hold or single-click for Fn/Globe, double-click for Enter`.
+
+If you previously installed the `hidutil` mapping, remove it because it cannot detect double-click timing:
+
+```sh
+hidutil property --set '{"UserKeyMapping":[]}'
+launchctl bootout gui/$(id -u) ~/Library/LaunchAgents/com.wisprkey.f24-to-fn.plist 2>/dev/null || true
+rm -f ~/Library/LaunchAgents/com.wisprkey.f24-to-fn.plist
+```
+
+### Simple fallback: hidutil
 
 Apply immediately:
 
@@ -113,17 +140,7 @@ launchctl kickstart -k gui/$(id -u)/com.wisprkey.f24-to-fn
 ```
 
 The `hidutil` mapping is global: it maps any keyboard's F24 to Apple Fn/Globe.
-
-### Option 2: Karabiner-Elements
-
-Install Karabiner-Elements, then copy:
-
-```sh
-mkdir -p ~/.config/karabiner/assets/complex_modifications
-cp macos/karabiner-f24-to-fn.json ~/.config/karabiner/assets/complex_modifications/
-```
-
-Open Karabiner-Elements and enable the rule named `Map WisprKey F24 to Mac Fn/Globe`.
+It does not support double-click Enter.
 
 ## Test Fn Behavior
 

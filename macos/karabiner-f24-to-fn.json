@@ -1,11 +1,18 @@
 {
-  "title": "WisprKey F24 to Mac Fn/Globe",
+  "title": "WisprKey F24 hold/single click and double-click Enter",
   "rules": [
     {
-      "description": "Map WisprKey F24 to Mac Fn/Globe",
+      "description": "WisprKey: hold or single-click for Fn/Globe, double-click for Enter",
       "manipulators": [
         {
           "type": "basic",
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "wisprkey_f24_waiting_for_second_tap",
+              "value": 1
+            }
+          ],
           "from": {
             "key_code": "f24",
             "modifiers": {
@@ -16,9 +23,65 @@
           },
           "to": [
             {
-              "apple_vendor_top_case_key_code": "keyboard_fn"
+              "set_variable": {
+                "name": "wisprkey_f24_waiting_for_second_tap",
+                "value": 0
+              }
+            },
+            {
+              "key_code": "return_or_enter"
             }
           ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "f24",
+            "modifiers": {
+              "optional": [
+                "any"
+              ]
+            }
+          },
+          "to_if_held_down": [
+            {
+              "apple_vendor_top_case_key_code": "keyboard_fn"
+            }
+          ],
+          "to_if_alone": [
+            {
+              "set_variable": {
+                "name": "wisprkey_f24_waiting_for_second_tap",
+                "value": 1
+              }
+            }
+          ],
+          "to_delayed_action": {
+            "to_if_invoked": [
+              {
+                "set_variable": {
+                  "name": "wisprkey_f24_waiting_for_second_tap",
+                  "value": 0
+                }
+              },
+              {
+                "apple_vendor_top_case_key_code": "keyboard_fn"
+              }
+            ],
+            "to_if_canceled": [
+              {
+                "set_variable": {
+                  "name": "wisprkey_f24_waiting_for_second_tap",
+                  "value": 0
+                }
+              }
+            ]
+          },
+          "parameters": {
+            "basic.to_delayed_action_delay_milliseconds": 300,
+            "basic.to_if_alone_timeout_milliseconds": 250,
+            "basic.to_if_held_down_threshold_milliseconds": 250
+          }
         }
       ]
     }
