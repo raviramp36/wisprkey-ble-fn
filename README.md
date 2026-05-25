@@ -20,11 +20,11 @@ Generic BLE keyboards do not have a standard cross-platform Fn key. Apple’s in
 
 ## Button Behavior
 
-- Hold: Karabiner sends and holds Fn/Globe until release.
-- Single short click: Karabiner sends a delayed Fn/Globe tap after the double-click window expires.
-- Double short click: Karabiner sends `Enter`.
+- Single press: Karabiner sends Fn/Globe to toggle Whisper Flow listening.
+- Press again: Karabiner sends Fn/Globe again to stop Whisper Flow listening.
+- Double-click: Karabiner sends `Enter`.
 
-This behavior is implemented on macOS, not in firmware. The single-click Fn/Globe tap is delayed by about 300 ms so a double-click does not accidentally trigger talk/audio capture first.
+This behavior is implemented on macOS, not in firmware. The rule keeps Fn/Globe responsive for Whisper Flow and uses a short double-click window for Enter.
 
 ## Firmware
 
@@ -107,7 +107,7 @@ mkdir -p ~/.config/karabiner/assets/complex_modifications
 cp macos/karabiner-f24-to-fn.json ~/.config/karabiner/assets/complex_modifications/wisprkey-f24-to-fn.json
 ```
 
-Open Karabiner-Elements and enable the rule named `WisprKey: hold for Fn/Globe, double-click for Enter`.
+Open Karabiner-Elements and enable the rule named `WisprKey: press for Fn/Globe, double-click for Enter`.
 
 If you previously installed the `hidutil` mapping, remove it because it cannot detect double-click timing:
 
