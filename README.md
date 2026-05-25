@@ -1,14 +1,15 @@
-# WisprKey BLE Fn Button
+# WisprKey BLE Button For Wispr Flow
 
-WisprKey is ESP32-C3 firmware for a one-button BLE keyboard. The button is wired to IO7 and sends a function-key fallback (`F24`) plus an experimental Apple vendor Fn/Globe-style HID report.
+WisprKey is an ESP32-C3 based one-button BLE keyboard for controlling Wispr Flow on macOS. The hardware button is wired to IO7 and sends `F24`; macOS then uses Karabiner-Elements to turn that key into the Fn/Globe behavior Wispr Flow expects.
 
-The reliable macOS path is:
+The working flow is:
 
 1. ESP32-C3 advertises as `WisprKey BLE`.
 2. IO7 button sends `F24`.
-3. macOS software maps `F24` to Fn/Globe or Enter with Karabiner-Elements.
+3. Karabiner-Elements maps `F24` from the WisprKey device to Fn/Globe or Enter.
+4. Wispr Flow uses Fn/Globe as the start/stop dictation shortcut.
 
-Generic BLE keyboards do not have a standard cross-platform Fn key. Apple’s internal Fn/Globe key is vendor-specific, so the firmware includes an experimental report, but the documented working path is the F24 mapping.
+Generic BLE keyboards do not have a standard cross-platform Fn key. Apple’s internal Fn/Globe key is vendor-specific, so the reliable path is to send `F24` from firmware and handle the Wispr Flow shortcut in macOS software.
 
 ## Hardware
 
@@ -20,11 +21,11 @@ Generic BLE keyboards do not have a standard cross-platform Fn key. Apple’s in
 
 ## Button Behavior
 
-- Single press: Karabiner sends Fn/Globe to toggle Whisper Flow listening.
-- Press again: Karabiner sends Fn/Globe again to stop Whisper Flow listening.
+- Single press: Karabiner sends Fn/Globe to toggle Wispr Flow listening.
+- Press again: Karabiner sends Fn/Globe again to stop Wispr Flow listening.
 - Double-click: Karabiner sends `Enter`.
 
-This behavior is implemented on macOS, not in firmware. The rule keeps Fn/Globe responsive for Whisper Flow and uses a short double-click window for Enter.
+This behavior is implemented on macOS, not in firmware. The rule keeps Fn/Globe responsive for Wispr Flow and uses a short double-click window for Enter.
 
 ## Firmware
 
@@ -96,18 +97,18 @@ If these logs appear, the ESP32-C3 and IO7 wiring are working.
 2. Pair `WisprKey BLE`.
 3. If the HID descriptor changed after a firmware update, remove/forget `WisprKey BLE`, then pair it again.
 
-## macOS Fn/Globe And Double-Click Mapping
+## macOS Wispr Flow Mapping
 
 ### Recommended: Karabiner-Elements
 
-Karabiner-Elements is required for the double-click Enter behavior. Install Karabiner-Elements, then copy:
+Karabiner-Elements is required for the Wispr Flow shortcut and double-click Enter behavior. Install Karabiner-Elements, then copy:
 
 ```sh
 mkdir -p ~/.config/karabiner/assets/complex_modifications
 cp macos/karabiner-f24-to-fn.json ~/.config/karabiner/assets/complex_modifications/wisprkey-f24-to-fn.json
 ```
 
-Open Karabiner-Elements and enable the rule named `WisprKey: press for Fn/Globe, double-click for Enter`.
+Open Karabiner-Elements and enable the rule named `WisprKey: Wispr Flow toggle and double-click Enter`.
 
 If you previously installed the `hidutil` mapping, remove it because it cannot detect double-click timing:
 
@@ -142,9 +143,12 @@ launchctl kickstart -k gui/$(id -u)/com.wisprkey.f24-to-fn
 The `hidutil` mapping is global: it maps any keyboard's F24 to Apple Fn/Globe.
 It does not support double-click Enter.
 
-## Test Fn Behavior
+## Test Wispr Flow Behavior
 
-Hold the WisprKey button and press `Delete` on the Mac keyboard. If macOS accepts the mapping, this should behave like forward-delete.
+1. Open Wispr Flow and make sure Fn/Globe is configured as the dictation shortcut.
+2. Press the WisprKey button once. Wispr Flow should enter listening mode.
+3. Press the WisprKey button again. Wispr Flow should stop listening.
+4. Double-click the WisprKey button quickly. macOS should receive `Enter`.
 
 ## Troubleshooting
 

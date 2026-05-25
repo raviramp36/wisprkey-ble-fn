@@ -1,8 +1,8 @@
 {
-  "title": "WisprKey F24 hold and double-click",
+  "title": "WisprKey Wispr Flow toggle and double-click Enter",
   "rules": [
     {
-      "description": "WisprKey: press for Fn/Globe, double-click for Enter",
+      "description": "WisprKey: Wispr Flow toggle and double-click Enter",
       "manipulators": [
         {
           "type": "basic",
